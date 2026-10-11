@@ -405,7 +405,12 @@ const api: KoloftApi = {
     },
     fetchFreshness: (p) => ipcRenderer.invoke('workspace:fetchFreshness', p),
     pull: (p, expect) => ipcRenderer.invoke('workspace:pull', p, expect),
-    discover: () => ipcRenderer.invoke('workspace:discover')
+    discover: () => ipcRenderer.invoke('workspace:discover'),
+    createProject: (parent, name) => ipcRenderer.invoke('project:create', parent, name)
+  },
+  assist: {
+    route: (id, message) => ipcRenderer.invoke('assist:route', id, message),
+    cancel: (id) => ipcRenderer.send('assist:cancel', id)
   },
   settings: {
     get: () => ipcRenderer.invoke('settings:get'),
@@ -548,11 +553,6 @@ const api: KoloftApi = {
       const handler = (): void => cb()
       ipcRenderer.on('shortcut:find-files', handler)
       return () => ipcRenderer.removeListener('shortcut:find-files', handler)
-    },
-    onSearchSessions: (cb) => {
-      const handler = (): void => cb()
-      ipcRenderer.on('shortcut:search-sessions', handler)
-      return () => ipcRenderer.removeListener('shortcut:search-sessions', handler)
     },
     onWorkbenchShortcut: (cb) => {
       const handler = (_e: unknown, cmd: WorkbenchShortcut): void => cb(cmd)

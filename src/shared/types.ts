@@ -1,3 +1,5 @@
+import type { SessionRoute } from './sessionRoute'
+
 export interface ProjectInfo {
   root: string
   treeRoot: string
@@ -178,6 +180,7 @@ export interface Settings {
   worldClocks: string[]
   onboardingSeen: boolean
   assist: AssistSetting
+  newProjectFolders: Record<string, string>
   hintsSeen: string[]
   hintsOff: boolean
   lastSeenVersion: string
@@ -278,6 +281,7 @@ export const DEFAULT_SETTINGS: Settings = {
   worldClocks: [],
   onboardingSeen: false,
   assist: null,
+  newProjectFolders: {},
   hintsSeen: [],
   hintsOff: false,
   lastSeenVersion: '',
@@ -1001,6 +1005,11 @@ export interface KoloftApi {
     fetchFreshness(path: string): Promise<WorkspaceFreshness | null>
     pull(path: string, expect: { branch: string; head: string }): Promise<WorkspacePullResult>
     discover(): Promise<DiscoveredFolder[]>
+    createProject(parent: string, name: string): Promise<ProjectCreateResult>
+  }
+  assist: {
+    route(id: number, message: string): Promise<SessionRoute | null>
+    cancel(id: number): void
   }
   settings: {
     get(): Promise<Settings>
@@ -1068,7 +1077,6 @@ export interface KoloftApi {
     onAddWorkspace(cb: () => void): () => void
     onSave(cb: () => void): () => void
     onFindFiles(cb: () => void): () => void
-    onSearchSessions(cb: () => void): () => void
     // PLATFORM§7
     onBrowserCommand(cb: (cmd: BrowserCommand) => void): () => void
     // PLATFORM§7
@@ -1365,6 +1373,8 @@ export type WorkspaceAddResult =
   | { code: 'exists'; path: string }
   | { code: 'rejected-worktree' }
   | { code: 'not-found' }
+
+export type ProjectCreateResult = { ok: true; path: string } | { ok: false; reason: string }
 
 export interface WorkspaceRemoveResult {
   running: number

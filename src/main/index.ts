@@ -300,7 +300,8 @@ import type {
   WhatsNew,
   GitStepResult,
   PrChecks,
-  PrWorktreeResult
+  PrWorktreeResult,
+  WorkspaceAddResult
 } from '@shared/types'
 import { copyWorktreeIncludes } from './sessionWorktrees'
 import { AgentRequests, BUILTIN_VERBS, errorText, refused, type AgentVerb } from './agentRequests'
@@ -348,6 +349,8 @@ import { writeLine } from './crossSessionMessage'
 import { StartedSessions } from './startedSessions'
 import { ReaderDocs } from './readerDocs'
 import { koloftAssist } from './assist'
+import { createProject } from './newProject'
+import { routeSession } from './sessionRouter'
 import { closingTree, removeTree, whatIsLeft } from './sessionClose'
 import { finishAfterKoloftQuits, WorktreeRemovalWatch } from './claudeWorktreeExit'
 import { discordTokenRead, discordTokenWrite } from './accounts'
@@ -1005,6 +1008,7 @@ const assist = koloftAssist({
     return { binary, env: { ...codexSessions.defaultEnv, CODEX_HOME: picked.home } }
   }
 })
+const assistRuns = new Map<number, AbortController>()
 
 const sessionDeps: SessionVerbDeps = {
   workspaceOf: (tabId) => sessionBackends.workspaceOfTab(tabId),
@@ -3839,12 +3843,36 @@ function registerIpc(): void {
     return commitSettings(sanitizeSettingsPatch(patch))
   })
 
-  ipcMain.handle('workspace:add', (_e, p: string) => {
+  ipcMain.handle('assist:route', async (_e, id: unknown, message: unknown) => {
+    if (typeof id !== 'number' || typeof message !== 'string' || !workspaceMgr) return null
+    const mgr = workspaceMgr
+    const run = new AbortController()
+    assistRuns.set(id, run)
+    try {
+      return await routeSession(
+        { rows: () => mgr.rows(), worktrees: (p) => mgr.worktrees(p), assist },
+        message,
+        run.signal
+      )
+    } finally {
+      assistRuns.delete(id)
+    }
+  })
+  ipcMain.on('assist:cancel', (_e, id: unknown) => {
+    if (typeof id === 'number') assistRuns.get(id)?.abort()
+  })
+  const addWorkspacePath = (p: string): WorkspaceAddResult | undefined => {
     const r = workspaceMgr?.add(p)
     const remote = parseRemoteKey(p)
     if (remote && r?.code === 'added') remoteSync?.pokeNow(remote.host)
     return r
-  })
+  }
+  ipcMain.handle('workspace:add', (_e, p: string) => addWorkspacePath(p))
+  ipcMain.handle('project:create', (_e, parent: unknown, name: unknown) =>
+    typeof parent === 'string' && parent && typeof name === 'string'
+      ? createProject(hosts.of(parent), parent, name, addWorkspacePath)
+      : { ok: false, reason: 'Pick a folder.' }
+  )
   ipcMain.handle('workspace:remove', (_e, p: string) => {
     const marked = markedSessionsOf(p)
     const r = workspaceMgr?.remove(p)

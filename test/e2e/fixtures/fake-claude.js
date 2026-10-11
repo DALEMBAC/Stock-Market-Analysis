@@ -35,6 +35,15 @@ const typedInATerminal = require('tty').isatty(0) && require('tty').isatty(1)
 if (argv[0] === '-p' && !typedInATerminal) {
   const promptArg = argv[1] && !argv[1].startsWith('-') ? argv[1] : ''
   const input = require('tty').isatty(0) ? promptArg : fs.readFileSync(0, 'utf8')
+  const sentinelHome = process.env.HOME || require('os').homedir()
+  const assistReply = path.join(sentinelHome, 'fake-claude-assist-reply')
+  if (fs.existsSync(assistReply)) {
+    fs.appendFileSync(path.join(sentinelHome, 'fake-claude-assist-asked.txt'), input + '\n')
+    const waitMsFile = path.join(sentinelHome, 'fake-claude-assist-ms')
+    if (fs.existsSync(waitMsFile)) sleepBlockingMs(Number(fs.readFileSync(waitMsFile, 'utf8')))
+    process.stdout.write(fs.readFileSync(assistReply, 'utf8'))
+    process.exit(0)
+  }
   const WRITTEN_LIST = 'Files the agent wrote this turn:\n'
   if (input.includes(WRITTEN_LIST)) {
     const [asked, written] = input.split(WRITTEN_LIST)
