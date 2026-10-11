@@ -105,6 +105,7 @@ import {
   setupStatusline,
   statusLineSetting
 } from './statusline'
+import { setupPlaywrightCli } from './playwrightCli'
 import {
   setFindAvailable,
   setKeepAwakeChecked,
@@ -840,6 +841,7 @@ function machinePackage(): MachinePackage {
   return (machinePkg = buildMachinePackage(machinePackageBase(app.getPath('userData')), pkgFiles))
 }
 
+let playwrightCliBin: string | undefined
 let cronRunner: CronRunner | null = null
 let conductors: Conductors | null = null
 let discordLink: DiscordLink | null = null
@@ -1683,6 +1685,8 @@ app.whenReady().then(() => {
 
   const hookPaths = setupHooks((tabId) => anotherLiveInstanceOwns(tabId, pidAlive))
   const statusline = setupStatusline()
+  const playwrightBin = setupPlaywrightCli()
+  playwrightCliBin = playwrightBin
   ptyMgr.makeHookSettings = (tabId, allowKoloft, conductor) =>
     writeTabHookSettings(
       hookPaths,
@@ -1859,6 +1863,7 @@ app.whenReady().then(() => {
       pickHome: pickCodexHome,
       browserEndpoint: relayEndpoint,
       openShimRoot: path.join(userData, 'codex-open'),
+      playwrightBin,
       agent: {
         enabled: () => agentToolsFor('codex', 'local'),
         answer: (tabId, dir, name, raw) => void agentRequests.answerFor(tabId, dir, name, raw)
@@ -2443,9 +2448,10 @@ app.on('before-quit', (e) => {
   resetQuitGuard()
 })
 
-function setupLine(): string | undefined {
+function setupLine(playwrightBin?: string): string | undefined {
   if (!ptyMgr.shimDir) return undefined
-  return `export PATH="${ptyMgr.shimDir}:$PATH"; hash -r 2>/dev/null; clear`
+  const dirs = playwrightBin ? `${ptyMgr.shimDir}:${playwrightBin}` : ptyMgr.shimDir
+  return `export PATH="${dirs}:$PATH"; hash -r 2>/dev/null; clear`
 }
 
 const processedOpenIds = new Set<string>()
@@ -3595,7 +3601,7 @@ const claudeBackend = new ClaudeBackend({
   workspaces: () => workspaceMgr,
   remoteSync: () => remoteSync,
   userData: () => app.getPath('userData'),
-  setupLine,
+  setupLine: () => setupLine(playwrightCliBin),
   ptysChanged: () => writeRelayEnv(ptyTabIds()),
   resumeProbes,
   events: (tabId, event) => sessionBackends.observe(tabId, event),
